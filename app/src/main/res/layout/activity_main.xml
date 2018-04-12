@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context="com.example.bohdan.wikiguildwars.MainActivity">
+
+    <ListView
+        android:id="@+id/liste23"
+        android:layout_width="wrap_content"
+        android:layout_height="492dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="65dp"
+        android:layout_height="38dp"
+        android:layout_marginStart="108dp"
+        android:layout_marginTop="500dp"
+        android:onClick="deleteEvenElement"
+        android:text="Even"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="65dp"
+        android:layout_height="38dp"
+        android:layout_marginStart="212dp"
+        android:layout_marginTop="500dp"
+        android:onClick="deleteOddElement"
+        android:text="Odd"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</android.support.constraint.ConstraintLayout>
