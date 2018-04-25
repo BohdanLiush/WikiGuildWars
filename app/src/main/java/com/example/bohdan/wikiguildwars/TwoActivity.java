@@ -39,13 +39,13 @@ public class TwoActivity extends AppCompatActivity implements Serializable {
         id.setText("Id: " + model.getId());
         Picasso.get().load(model.getIcon()).into(imageView);
 
-        ActionBar actionBar = getSupportActionBar();
+        /*ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);*/
 
     }
 
-    public boolean onOptionsItemSelected(MenuItem item) {
+    /*public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();  // цей метод працює
@@ -53,5 +53,5 @@ public class TwoActivity extends AppCompatActivity implements Serializable {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
+    }*/
 }

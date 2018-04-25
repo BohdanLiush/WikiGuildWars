@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">WikiGuildWars</string>
+    <string name="Textview">WikiGuildWars</string>
+    <string name="country">Choose a list</string>
 </resources>
