@@ -1,10 +1,13 @@
 package com.example.bohdan.wikiguildwars;
 
 import android.annotation.SuppressLint;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,110 +32,67 @@ import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MainActivity extends AppCompatActivity implements Serializable {
+public class MainActivity extends AppCompatActivity implements Serializable, CallbackClass.Callback {
 
-    private Context context;
-    private final String URL = "https://api.guildwars2.com/v2/";
-    public List<Model> model;
-    BaseAdapter baseAdapter;
-    public ArrayList<Model> modelList = new ArrayList<>();
-    ArrayList<String> spinnerList = new ArrayList<>();
-    ArrayList<Model> spinnerModelList = new ArrayList<>();
-    public ArrayList<Model> templist = new ArrayList<>();
+    // private final String URL = "https://api.guildwars2.com/v2/";
+    // public List<Model> model;
+    // BaseAdapter baseAdapter;
+    // public ArrayList<Model> modelList = new ArrayList<>();
+    // public ArrayList<Model> templist = new ArrayList<>();
 
-    Thread s, p, t;
-    //String number = "11,15,23,24,1,2,6,56,57,58,59,60,61,62,63,64,68,69,70";
-    String number = "";
-    int  numberObj;
+    //Thread s, p, t;
+    //String number = "";
+    public int  numberObj;
 
-    int count = 0;
-    Call<List<Model>> tanks;
-    TextView textSeekbar;
-    SeekBar seekBar;
+    //    int count = 0;
+    /* Call<List<Model>> tanks;
     GridView gridView;
-    Spinner spinner;
     SquareImageView squareImageView;
-    AdapterNew adapterNew;
+    AdapterNew adapterNew;*/
+
+    FirstFragment firstFragment = new FirstFragment();
+    NetworkManager networkManager = new NetworkManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        seekBar = findViewById(R.id.seekBar);
-        textSeekbar = findViewById(R.id.textView3);
-        textSeekbar.setText("Progress: " + seekBar.getProgress() + " / " + seekBar.getMax());
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
-                textSeekbar.setText(String.valueOf("Progress: " + progress + " / " + seekBar.getMax()));
-                numberObj = progress;
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
-       /* spinnerModelList.addAll(EvenElement());
-        spinnerModelList.addAll(OddElement());*/
-
-        //!!!...spinner
-        spinnerList.add("    John");
-        spinnerList.add("    All");
-        spinnerList.add("    Even");
-        spinnerList.add("    Odd");
-
-        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter(this,R.layout.support_simple_spinner_dropdown_item,spinnerList);
-        arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-
-        spinner = findViewById(R.id.spinner);
-        spinner.setAdapter(arrayAdapter);
-        spinner.setPromptId(R.string.country);
-        // spinner.setSelection(0,false);
-
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-
-                if (position==0){
-                  TemplistReturn();
-
-                }
-                if (position==1){
-                    deleteAllElement(view);
-                }
-                if (position==2){
-                   deleteEvenElement();
-
-                }
-                if (position==3){
-                    deleteOddElement(view);
-
-                }
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-        // listView.setAdapter(baseAdapter);
-        // listView.invalidateViews();
-        // listView.refreshDrawableState();
+        loadFragment();
+        R.id.fr
     }
 
-    public void getTanksFromWeb(View view) throws InterruptedException {
+    private void loadFragment (){
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fm.beginTransaction();
+        fragmentTransaction.replace(R.id.frameLayout, firstFragment);
+        fragmentTransaction.commit();
+    }
 
-        gridView = findViewById(R.id.liste23);
+    @Override
+    public ArrayList<Model> callingBack(int numbers) throws InterruptedException {
+        //numberObj = numbers;
+        System.out.println("number " + numberObj);
+        networkManager.loadNumberFromMain(numbers);
+        System.out.println("network number:  " + networkManager.numberObj);
+        networkManager.loadObjectThread.join();
+        return networkManager.modelList;
+    }
+
+    @Override
+    public List<Model> callingBackSecondFr(Model i) throws InterruptedException {
+        Bundle arguments = new Bundle();
+        arguments.putSerializable("model", i);
+        SecondFragment secondFragment = new SecondFragment();
+        secondFragment.setArguments(arguments);
+        getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, R.id.).commit();
+
+
+        return null;
+    }
+
+    /*public void getIDSFromWeb(View view) throws InterruptedException {
+
+       gridView = findViewById(R.id.liste23);
         adapterNew = new AdapterNew(MainActivity.this);
         squareImageView = new SquareImageView(MainActivity.this);
 
@@ -146,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         });
 
         baseAdapter = new BaseAdapter() {
+
             @Override
             public int getCount() {
                 return modelList.size();
@@ -180,7 +141,6 @@ public class MainActivity extends AppCompatActivity implements Serializable {
                     Picasso.get().load(modelList.get(i).getIcon()).into(imageView);
                     System.out.println(modelList.size());
                 }
-
                 return view;
             }
         };
@@ -197,14 +157,12 @@ public class MainActivity extends AppCompatActivity implements Serializable {
 
         while (modelList.size()<numberObj){
             tanks = tankApi.tanksInfo(getIdsLoop(numberObj-modelList.size()));  // перший варіант
-
             s = new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         model = tanks.execute().body();
                         modelList.addAll(model);
-                        //templist.addAll(model);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -223,9 +181,9 @@ public class MainActivity extends AppCompatActivity implements Serializable {
             }
         System.out.println("count " + count);
         return number;
-    }
+    }*/
 
-    public void deleteEvenElement(){
+    /*public void deleteEvenElement(){
         //ArrayList<Model> templist = new ArrayList<>();
         for (int i = 0; i < modelList.size(); i++){
             if (modelList.get(i).getId()%2==0){
@@ -256,49 +214,15 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         }
         modelList.removeAll(templist);
         baseAdapter.notifyDataSetChanged();
-
-//        return templist;
+        // return templist;
     }
 
-   /* public List<Model> EvenElement() throws InterruptedException {
-      final   ArrayList<Model> templist = new ArrayList<>();
-        p = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                for (int i = 0; i < modelList.size(); i++){
-                    if (modelList.get(i).getId()%2==0){
-                        templist.add(modelList.get(i));
-                    }
-                }
-                modelList.removeAll(templist);
-            }
-        });
-        p.start();
-        p.join();
-        //baseAdapter.notifyDataSetChanged();
-        return modelList;
-    }
-
-    public List<Model> OddElement(){
-        ArrayList<Model> templist = new ArrayList<>();
-        for (int i = 0; i < modelList.size(); i++){
-            if (modelList.get(i).getId()%2!=0){
-                templist.add(modelList.get(i));
-            }
-
-        }
-        //modelList.removeAll(templist);
-        //baseAdapter.notifyDataSetChanged();
-        return templist;
-    }
-*/
     public List<Model> TemplistReturn() {
         for (int i = 0; i < modelList.size(); i++) {
             templist.add(modelList.get(i));
         }
         return templist;
-
-    }
+    }*/
 }
 
 

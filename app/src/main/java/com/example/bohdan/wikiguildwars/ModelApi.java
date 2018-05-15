@@ -16,5 +16,4 @@ public interface ModelApi {
     //@GET("items?ids=1,2,3,4,5,6,7,8,9,10")
     @GET("items")
     Call<List<Model>> tanksInfo(@Query("ids") String number);
-
 }
