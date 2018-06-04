@@ -1,13 +1,16 @@
 package com.example.bohdan.wikiguildwars;
 
 import android.annotation.SuppressLint;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,15 +38,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity implements Serializable, CallbackClass.Callback {
 
     // private final String URL = "https://api.guildwars2.com/v2/";
-    // public List<Model> model;
+    // public List<Model> listModel;
     // BaseAdapter baseAdapter;
     // public ArrayList<Model> modelList = new ArrayList<>();
     // public ArrayList<Model> templist = new ArrayList<>();
-
     //Thread s, p, t;
     //String number = "";
-    public int  numberObj;
-
+    public int numberObj;
     //    int count = 0;
     /* Call<List<Model>> tanks;
     GridView gridView;
@@ -52,16 +53,16 @@ public class MainActivity extends AppCompatActivity implements Serializable, Cal
 
     FirstFragment firstFragment = new FirstFragment();
     NetworkManager networkManager = new NetworkManager();
+    SecondFragment secondFragment = new SecondFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         loadFragment();
-        R.id.fr
     }
 
-    private void loadFragment (){
+    private void loadFragment() {
         FragmentManager fm = getFragmentManager();
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
         fragmentTransaction.replace(R.id.frameLayout, firstFragment);
@@ -70,7 +71,6 @@ public class MainActivity extends AppCompatActivity implements Serializable, Cal
 
     @Override
     public ArrayList<Model> callingBack(int numbers) throws InterruptedException {
-        //numberObj = numbers;
         System.out.println("number " + numberObj);
         networkManager.loadNumberFromMain(numbers);
         System.out.println("network number:  " + networkManager.numberObj);
@@ -79,15 +79,61 @@ public class MainActivity extends AppCompatActivity implements Serializable, Cal
     }
 
     @Override
-    public List<Model> callingBackSecondFr(Model i) throws InterruptedException {
+    public void callingBackSecondFr(Model i) throws InterruptedException {
+
         Bundle arguments = new Bundle();
-        arguments.putSerializable("model", i);
-        SecondFragment secondFragment = new SecondFragment();
+        arguments.putSerializable("listModel", i);
         secondFragment.setArguments(arguments);
-        getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, R.id.).commit();
 
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fm.beginTransaction();
+        fragmentTransaction.remove(firstFragment)
+                .add(R.id.frameLayout, secondFragment,"home").addToBackStack("home").commit();
 
-        return null;
+        //fragmentTransaction.replace(R.id.frameLayout, secondFragment);
+        //fragmentTransaction.addToBackStack("home");
+        //fragmentTransaction.commit();
+        //return (List<Model>) i;
+    }
+
+    @Override
+    public Model callingBack_2_singleObject(int number) throws InterruptedException {
+
+        networkManager.loadIdObjectFromMain(number);
+
+        Bundle arguments = new Bundle();
+        arguments.putSerializable("model", networkManager.oneModel);
+        secondFragment.setArguments(arguments);
+
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fm.beginTransaction();
+        /*fragmentTransaction.remove(firstFragment)
+                .add(R.id.frameLayout, secondFragment,"home").addToBackStack("home").commit();*/
+
+        fragmentTransaction.replace(R.id.frameLayout, secondFragment).addToBackStack("home").commit();
+
+        System.out.println("network number:  " + networkManager.numberObj);
+        networkManager.getIdOneObjectThread.join();
+        return networkManager.oneModel;
+    }
+
+    @Override
+    public void callingBackButton() {
+
+       /* Fragment home = getFragmentManager().findFragmentByTag("home");
+        if (home instanceof SecondFragment && home.isVisible()) {
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            ft.replace(R.id.frameLayout, firstFragment, "home");
+            ft.commit();
+        }*/
+       // this.getFragmentManager().popBackStackImmediate();
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
+            getFragmentManager().popBackStack();
+        } else {
+            super.onBackPressed();
+        }
+           // finish();
+        //this.getFragmentManager().popBackStack();
     }
 
     /*public void getIDSFromWeb(View view) throws InterruptedException {
@@ -156,13 +202,13 @@ public class MainActivity extends AppCompatActivity implements Serializable, Cal
         ModelApi tankApi = retrofit.create(ModelApi.class);
 
         while (modelList.size()<numberObj){
-            tanks = tankApi.tanksInfo(getIdsLoop(numberObj-modelList.size()));  // перший варіант
+            tanks = tankApi.idsInfo(getIdsLoop(numberObj-modelList.size()));  // перший варіант
             s = new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        model = tanks.execute().body();
-                        modelList.addAll(model);
+                        listModel = tanks.execute().body();
+                        modelList.addAll(listModel);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -183,7 +229,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Cal
         return number;
     }*/
 
-    /*public void deleteEvenElement(){
+    /*public void changeToEvenElement(){
         //ArrayList<Model> templist = new ArrayList<>();
         for (int i = 0; i < modelList.size(); i++){
             if (modelList.get(i).getId()%2==0){
@@ -195,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Cal
         //return templist;
     }
 
-    public void deleteOddElement(View view){
+    public void changeToOddElement(View view){
         //ArrayList<Model> templist = new ArrayList<>();
         for (int i = 0; i < modelList.size(); i++){
             if (modelList.get(i).getId()%2!=0){
@@ -207,7 +253,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Cal
         //return templist;
     }
 
-    public void deleteAllElement(View view){
+    public void changeToAllElement(View view){
         //ArrayList<Model> templist = new ArrayList<>();
         for (int i = 0; i < modelList.size(); i++) {
             templist.add(modelList.get(i));
@@ -223,7 +269,8 @@ public class MainActivity extends AppCompatActivity implements Serializable, Cal
         }
         return templist;
     }*/
-}
+    }
+
 
 
 

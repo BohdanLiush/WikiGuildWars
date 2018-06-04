@@ -3,6 +3,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="94dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="144dp"
+        android:layout_marginTop="276dp"
+        android:text="BACK"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/textView58"
         android:layout_width="121dp"

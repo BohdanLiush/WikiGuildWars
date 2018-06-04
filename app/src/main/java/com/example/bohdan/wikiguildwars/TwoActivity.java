@@ -49,6 +49,7 @@ public class TwoActivity extends AppCompatActivity implements Serializable {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();  // цей метод працює
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -13,20 +13,58 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class NetworkManager  {
 
     public final String URL = "https://api.guildwars2.com/v2/";
-    public List<Model> model = new ArrayList<>();
+    public List<Model> listModel = new ArrayList<>();
+    public Model oneModel;
+
     public ArrayList<Model> modelList = new ArrayList<>();
     public ArrayList<Model> templist = new ArrayList<>();
-    public Thread loadObjectThread, p, t;
+
+    public Thread loadObjectThread, p, getIdOneObjectThread;
+
     public String number = "";
-    public Call<List<Model>> tanks;
     public int numberObj;
     public int count = 0;
+
+    public Call<List<Model>> idsCall;
+    public Call<Model> idSingleCall;
 
     public void loadNumberFromMain(int number) throws InterruptedException {
         numberObj = number;
         getIDSFromWeb();
-       /* NetworkManager networkManager = new NetworkManager();
-        networkManager.execute();*/
+    }
+
+    public void loadIdObjectFromMain(int number) throws InterruptedException {
+        numberObj = number;
+        getIdOneObject();
+    }
+
+    public void getIdOneObject() throws InterruptedException {
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        final ModelApi idApi = retrofit.create(ModelApi.class);
+
+        getIdOneObjectThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                idSingleCall = idApi.idInfoSingleObject(String.valueOf(numberObj));
+                try {
+                    oneModel = idSingleCall.execute().body();
+                   /* if (listModel != null) {
+                        modelList.addAll(listModel);
+                    }*/
+                    System.out.println("Smotrim: ");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        getIdOneObjectThread.start();
+        getIdOneObjectThread.join();
+
     }
 
     public void getIDSFromWeb() throws InterruptedException {
@@ -36,19 +74,19 @@ public class NetworkManager  {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        ModelApi tankApi = retrofit.create(ModelApi.class);
+        ModelApi idsApi = retrofit.create(ModelApi.class);
         //ExecutorService service = Executors.newCachedThreadPool();
 
         while (modelList.size() < numberObj) {
-            tanks = tankApi.tanksInfo(getIdsLoop(numberObj - modelList.size()));  // перший варіант
-            //tanks = tankApi.tanksInfo(String.valueOf(numberObj));  // перший варіант
+
+            idsCall = idsApi.idsInfo(getIdsLoop(numberObj - modelList.size()));  // перший варіант
 
             /*service.submit(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        model = tanks.execute().body();
-                        modelList.addAll(model);
+                        listModel = tanks.execute().body();
+                        modelList.addAll(listModel);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -61,9 +99,9 @@ public class NetworkManager  {
                 @Override
                 public void run() {
                     try {
-                        model = tanks.execute().body();
-                        if (model!=null) {
-                            modelList.addAll(model);
+                        listModel = idsCall.execute().body();
+                        if (listModel != null) {
+                            modelList.addAll(listModel);
                         }
                         System.out.println("Smotrim: ");
                     } catch (IOException e) {
@@ -75,42 +113,35 @@ public class NetworkManager  {
             loadObjectThread.join();
 
         /*while (modelList.size() < numberObj) {
-            tanks = tankApi.tanksInfo(getIdsLoop(numberObj - modelList.size()));
+            tanks = idsApi.idsInfo(getIdsLoop(numberObj - modelList.size()));
 
             tanks.enqueue(new Callback<List<Model>>() {
                 @Override
                 public void onResponse(Call<List<Model>> call, Response<List<Model>> response) {
-                    model = response.body();
-                    modelList.addAll(model);
+                    listModel = response.body();
+                    modelList.addAll(listModel);
                 }
 
                 @Override
                 public void onFailure(Call<List<Model>> call, Throwable t) {
                 }
             });
-
-
             // перший варіант
-
             @Override
             public void run() {
                 try {
-                    model = tanks.execute().body();
-                    modelList.addAll(model);
+                    listModel = tanks.execute().body();
+                    modelList.addAll(listModel);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         });*/
-
-
         }
     }
 
-
-
-
     public String getIdsLoop(int n) { // якшо різниця була 20 об.
+
         number = "";  // обнулення строки після 100 або іншого числа, тобто строка буде іти від 100, 101 як нам і треба
         for (int i = 0; i < n; i++) {
             number = number + count + ","; //101 do 120 // другий прохід
@@ -134,13 +165,13 @@ public class NetworkManager  {
             //ExecutorService service = Executors.newCachedThreadPool();
 
             while (modelList.size() < numberObj) {
-                tanks = tankApi.tanksInfo(getIdsLoop(numberObj - modelList.size()));  // перший варіант
+                tanks = tankApi.idsInfo(getIdsLoop(numberObj - modelList.size()));  // перший варіант
            *//* service.submit(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        model = tanks.execute().body();
-                        modelList.addAll(model);
+                        listModel = tanks.execute().body();
+                        modelList.addAll(listModel);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -153,8 +184,8 @@ public class NetworkManager  {
                     @Override
                     public void run() {
                         try {
-                            model = tanks.execute().body();
-                            modelList.addAll(model);
+                            listModel = tanks.execute().body();
+                            modelList.addAll(listModel);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -162,13 +193,13 @@ public class NetworkManager  {
                 });
 
         *//*while (modelList.size() < numberObj) {
-            tanks = tankApi.tanksInfo(getIdsLoop(numberObj - modelList.size()));
+            tanks = tankApi.idsInfo(getIdsLoop(numberObj - modelList.size()));
 
             tanks.enqueue(new Callback<List<Model>>() {
                 @Override
                 public void onResponse(Call<List<Model>> call, Response<List<Model>> response) {
-                    model = response.body();
-                    modelList.addAll(model);
+                    listModel = response.body();
+                    modelList.addAll(listModel);
                 }
 
                 @Override
@@ -182,8 +213,8 @@ public class NetworkManager  {
           *//*  @Override
             public void run() {
                 try {
-                    model = tanks.execute().body();
-                    modelList.addAll(model);
+                    listModel = tanks.execute().body();
+                    modelList.addAll(listModel);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
