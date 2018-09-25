@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="model"
+            type="com.example.bohdan.wikiguildwars.Model"/>
+    </data>
 
 
     <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -22,29 +29,33 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@mipmap/ic_launcher"
+            android:src="@{model.icon}"
             tools:layout_editor_absoluteX="35dp"
             tools:layout_editor_absoluteY="84dp"
+
             android:layout_alignParentStart="true" />
 
-    <TextView
-        android:id="@+id/textView"
-        style="@style/Customized"
-        android:layout_width="150dp"
-        android:layout_height="30dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:textAppearance="?android:attr/textAppearance"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/textView_id"
+            style="@style/Customized"
+            android:layout_width="74dp"
+            android:layout_height="30dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:text='@{"   Id:   "+String.valueOf(model.id)}'
+            android:textAppearance="?android:attr/textAppearance"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/textView2_description"
         style="@style/Customized"
         android:layout_width="156dp"
         android:layout_height="31dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
+        android:text='@{"description: "+ model.description}'
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentStart="true"
@@ -53,3 +64,4 @@
 
     </RelativeLayout>
 
+</layout>

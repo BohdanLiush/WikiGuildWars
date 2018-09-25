@@ -24,12 +24,10 @@ public class CallbackClass {
     }
 
     List<Model> loadNumberObject(int number) throws InterruptedException {
-       // вызываем метод обратного вызова
        return callback.callingBack(number);
     }
 
     void sendNumberObject(Model i) throws InterruptedException {
-        // вызываем метод обратного вызова
         callback.callingBackSecondFr(i);
     }
 

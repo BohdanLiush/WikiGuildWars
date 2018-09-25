@@ -1,5 +1,9 @@
 package com.example.bohdan.wikiguildwars;
 
+import android.databinding.BindingAdapter;
+import android.databinding.ObservableArrayList;
+import android.widget.GridView;
+
 import java.io.Serializable;
 import java.util.List;
 import com.google.gson.annotations.Expose;
@@ -9,6 +13,8 @@ import com.google.gson.annotations.SerializedName;
  */
 
 public class Model implements Serializable {
+
+
 
     @SerializedName("name")
     @Expose
@@ -164,4 +170,6 @@ public class Model implements Serializable {
     public void setDescription(String description) {
         this.description = description;
     }
+
+
 }

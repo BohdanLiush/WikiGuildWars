@@ -10,11 +10,4 @@
     app:layout_constraintStart_toStartOf="parent"
 
     tools:context="com.example.bohdan.wikiguildwars.MainActivity">
-
-
-
-
-
-
-
-    </RelativeLayout>
+</RelativeLayout>
